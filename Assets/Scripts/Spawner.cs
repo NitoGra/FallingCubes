@@ -14,13 +14,13 @@ public class Spawner : MonoBehaviour
 
     private void Start()
     {
+        _cubes ??= new List<Cube>();
         StartCoroutine(Spawn());
     }
 
     private IEnumerator Spawn()
     {
         WaitForSeconds wait = new WaitForSeconds(0.1f);
-        _cubes ??= new List<Cube>();
         
         while (true)
         {
