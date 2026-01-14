@@ -1,11 +1,14 @@
-using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Cube : MonoBehaviour
 {
+    private readonly int _disappearDelayStart = 2;
+    private readonly int _disappearDelayEnd = 5;
+    
     [SerializeField] private Renderer _renderer;
     private bool _isDisappears = false;
+    
     private void OnEnable()
     {
         _renderer.material.color = Color.white;
@@ -21,7 +24,7 @@ public class Cube : MonoBehaviour
 
         _isDisappears = true;
         ColorChange();
-        Invoke(nameof(Disappearance), Random.Range(2, 5));
+        Invoke(nameof(Disappearance), Random.Range(_disappearDelayStart, _disappearDelayEnd));
     }
 
     private void Disappearance()
