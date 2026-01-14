@@ -1,64 +1,122 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class Spawner : MonoBehaviour
+namespace Scripts
 {
-    [SerializeField] private Cube _cubePrefab;
-    [SerializeField] private float _spawnPositionX;
-    [SerializeField] private float _spawnPositionZ;
-
-    private List<Cube> _cubes;
-
-    private void Start()
+    public class Spawner : MonoBehaviour
     {
-        _cubes ??= new List<Cube>();
-        StartCoroutine(Spawn());
-    }
+        [SerializeField] private Cube _cubePrefab;
+        [SerializeField] private float _spawnPositionX;
+        [SerializeField] private float _spawnPositionZ;
 
-    private IEnumerator Spawn()
-    {
-        WaitForSeconds wait = new WaitForSeconds(0.1f);
-        
-        while (true)
+        private PoolObject<Cube> _poolCubes;
+        private Pool _poolCube;
+
+        private void Start()
         {
-            yield return wait;
-            SpawnCube();
+            CubeFactory factory = new CubeFactory(_cubePrefab);
+            _poolCubes = new(factory);
+            StartCoroutine(Spawn());
+        }
+
+        private IEnumerator Spawn()
+        {
+            WaitForSeconds wait = new WaitForSeconds(0.1f);
+
+            while (enabled)
+            {
+                yield return wait;
+                SpawnCube();
+            }
+        }
+
+        private void SpawnCube()
+        {
+            Cube cube = _poolCubes.Get(_poolCubes.Return);
+            
+            Vector3 cubePosition = new Vector3(
+                Random.Range(-_spawnPositionX, _spawnPositionX), 0,
+                Random.Range(-_spawnPositionZ, _spawnPositionZ));
+            
+            cube.transform.parent = transform;
+            cube.transform.localPosition = cubePosition;
+            cube.gameObject.SetActive(true);
         }
     }
 
-    private void SpawnCube()
+    public class Pool
     {
-        GetNewOrDisabled(transform, _cubes, _cubePrefab).transform.localPosition = new Vector3(
-            Random.Range(-_spawnPositionX, _spawnPositionX), 0, Random.Range(-_spawnPositionZ, _spawnPositionZ));
+        private List<MonoBehaviour> _items;
+
+        private Action<MonoBehaviour> _returnToPool;
+        private Func<MonoBehaviour> _create;
+        
+        public Pool(MonoBehaviour prefab)
+        {
+            _items = new List<MonoBehaviour>();
+            _create = () => MonoBehaviour.Instantiate(prefab);
+        }
+
+        public MonoBehaviour Get => _items.Count > 0 ? _items.Find(item => item.gameObject.activeSelf == false) : _create.Invoke();
     }
     
-    private static T GetNewOrDisabled<T>(Transform position, List<T> listObjects, T prefab) where T: MonoBehaviour
+    public class PoolObject<T> where T : MonoBehaviour, IPoolItem
     {
-        foreach (var aButton in listObjects.Where(aButton =>aButton && aButton.gameObject.activeSelf == false))
+        private Queue<IPoolItem> _items;
+        private IPoolObjectFactory _factory;
+
+        public PoolObject(IPoolObjectFactory factory)
         {
-            aButton.gameObject.SetActive(true);
-            aButton.transform.SetParent(position);
-            return aButton;
+            _items = new Queue<IPoolItem>();
+            _factory = factory;
         }
 
-        if (position is null || prefab is null)
+        private T Create(Action<MonoBehaviour> returnToPool) 
         {
-            Debug.LogWarning("Break null error");
-            return null;
+            T newItem = (T)_factory.Create();
+            newItem.Init(returnToPool);
+            newItem.gameObject.SetActive(false);
+            return newItem;
         }
 
-        if (prefab.IsDestroyed())
+        public T Get(Action<MonoBehaviour> returnToPool)
         {
-            Debug.LogWarning("Break destroyed null error");
-            return null;
+            return (T)(_items.Count > 0 ? _items.Dequeue() : Create(returnToPool));
         }
 
-        T button = Instantiate(prefab, position);
-        button.gameObject.SetActive(true);
-        listObjects.Add(button); 
-        return button;
+        public void Return(MonoBehaviour item) 
+        {         
+            item.gameObject.SetActive(false);
+            _items.Enqueue((IPoolItem)item);
+        }
+    }
+
+    public class CubeFactory : IPoolObjectFactory
+    {
+        private readonly Cube _prefab;
+
+        public CubeFactory(Cube prefab)
+        {
+            _prefab = prefab;
+        }
+
+        public IPoolItem Create()
+        {
+            IPoolItem item = MonoBehaviour.Instantiate(_prefab);
+            return item;
+        }
+    }
+
+    public interface IPoolItem
+    {
+        public void Init(Action<MonoBehaviour> action);
+    }
+
+    public interface IPoolObjectFactory
+    {
+        public IPoolItem Create();
     }
 }

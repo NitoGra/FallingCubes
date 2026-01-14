@@ -1,40 +1,48 @@
+using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Cube : MonoBehaviour
+namespace Scripts
 {
-    private readonly int _disappearDelayStart = 2;
-    private readonly int _disappearDelayEnd = 5;
-    
-    [SerializeField] private Renderer _renderer;
-    private bool _isDisappears = false;
-    
-    private void OnEnable()
+    public class Cube : MonoBehaviour, ICube, IPoolItem
     {
-        _renderer.material.color = Color.white;
-    }
+        private const int MinDisappearRangeInSeconds = 2;
+        private const int MaxDisappearRangeInSeconds = 5;
 
-    private void OnCollisionEnter(Collision other)
-    {
-        if(_isDisappears)
-            return;
+        [SerializeField] private Renderer _renderer;
+        private bool _isDisappeared = false;
         
-        if(other.gameObject.layer == gameObject.layer)
-            return;
+        private Action<MonoBehaviour> _returnToPool ;
+        
+        public void Init(Action<MonoBehaviour> action)
+        {
+            _returnToPool = action;
+        }
+        
+        private void OnEnable()
+        {
+            _renderer.material.color = Color.white;
+        }
+        
+        public void CollideToFloor()
+        {
+            if (_isDisappeared)
+                return;
 
-        _isDisappears = true;
-        ColorChange();
-        Invoke(nameof(Disappearance), Random.Range(_disappearDelayStart, _disappearDelayEnd));
-    }
+            _isDisappeared = true;
+            ChangeColor();
+            Invoke(nameof(Disappear), Random.Range(MinDisappearRangeInSeconds, MaxDisappearRangeInSeconds));
+        }
+        
+        private void Disappear()
+        {
+            _returnToPool.Invoke(this);
+            _isDisappeared = false;
+        }
 
-    private void Disappearance()
-    {
-        gameObject.SetActive(false);
-        _isDisappears = false;
-    }
-
-    private void ColorChange()
-    {
-        _renderer.material.color = Random.ColorHSV();
+        private void ChangeColor()
+        {
+            _renderer.material.color = Random.ColorHSV();
+        }
     }
 }
