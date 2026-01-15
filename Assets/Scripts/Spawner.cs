@@ -5,14 +5,17 @@ using Random = UnityEngine.Random;
 public class Spawner : MonoBehaviour
 {
     [SerializeField] private Cube _cubePrefab;
+    [SerializeField] private Bomb _bombPrefab;
     [SerializeField] private float _spawnPositionX;
     [SerializeField] private float _spawnPositionZ;
 
     private Pool _cubes;
+    private Pool _bombs;
 
     private void Start()
     {
         _cubes = new Pool(_cubePrefab);
+        _bombs = new Pool(_bombPrefab);
         StartCoroutine(Spawn());
     }
 
@@ -29,7 +32,7 @@ public class Spawner : MonoBehaviour
 
     private void SpawnCube()
     {
-        MonoBehaviour cube = _cubes.Get;
+        Cube cube = _cubes.Get.GetComponent<Cube>();
         
         Vector3 cubePosition = new Vector3(
             Random.Range(-_spawnPositionX, _spawnPositionX), 0,
@@ -38,5 +41,6 @@ public class Spawner : MonoBehaviour
         cube.transform.parent = transform;
         cube.transform.localPosition = cubePosition;
         cube.gameObject.SetActive(true);
+        cube.Inst(() => _bombs.Get);
     }
 }
