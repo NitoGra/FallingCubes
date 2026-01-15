@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 193574643}
   - component: {fileID: 193574642}
   - component: {fileID: 193574641}
+  - component: {fileID: 193574644}
   m_Layer: 7
   m_Name: Plane
   m_TagString: Untagged
@@ -232,6 +233,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 193574639}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &193574644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 193574639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8eef9167c2a4750b7b87788929ffe69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Floor
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -381,6 +394,7 @@ GameObject:
   - component: {fileID: 369973059}
   - component: {fileID: 369973058}
   - component: {fileID: 369973057}
+  - component: {fileID: 369973060}
   m_Layer: 7
   m_Name: Plane (1)
   m_TagString: Untagged
@@ -482,6 +496,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 369973055}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &369973060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 369973055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8eef9167c2a4750b7b87788929ffe69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Floor
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,6 +647,7 @@ GameObject:
   - component: {fileID: 682793063}
   - component: {fileID: 682793062}
   - component: {fileID: 682793061}
+  - component: {fileID: 682793064}
   m_Layer: 7
   m_Name: Plane (3)
   m_TagString: Untagged
@@ -722,6 +749,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 682793059}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &682793064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 682793059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8eef9167c2a4750b7b87788929ffe69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Floor
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -783,6 +822,7 @@ GameObject:
   - component: {fileID: 1103158280}
   - component: {fileID: 1103158279}
   - component: {fileID: 1103158278}
+  - component: {fileID: 1103158281}
   m_Layer: 7
   m_Name: Plane (4)
   m_TagString: Untagged
@@ -884,6 +924,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1103158276}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1103158281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1103158276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8eef9167c2a4750b7b87788929ffe69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Floor
 --- !u!1 &1208660603
 GameObject:
   m_ObjectHideFlags: 0
@@ -896,6 +948,7 @@ GameObject:
   - component: {fileID: 1208660607}
   - component: {fileID: 1208660606}
   - component: {fileID: 1208660605}
+  - component: {fileID: 1208660608}
   m_Layer: 7
   m_Name: Plane (2)
   m_TagString: Untagged
@@ -997,6 +1050,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1208660603}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1208660608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208660603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8eef9167c2a4750b7b87788929ffe69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Floor
 --- !u!1 &1700153754
 GameObject:
   m_ObjectHideFlags: 0

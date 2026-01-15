@@ -1,8 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour
 {
@@ -10,11 +8,11 @@ public class Spawner : MonoBehaviour
     [SerializeField] private float _spawnPositionX;
     [SerializeField] private float _spawnPositionZ;
 
-    private List<Cube> _cubes;
+    private Pool _cubes;
 
     private void Start()
     {
-        _cubes ??= new List<Cube>();
+        _cubes = new Pool(_cubePrefab);
         StartCoroutine(Spawn());
     }
 
@@ -22,7 +20,7 @@ public class Spawner : MonoBehaviour
     {
         WaitForSeconds wait = new WaitForSeconds(0.1f);
         
-        while (true)
+        while (enabled)
         {
             yield return wait;
             SpawnCube();
@@ -31,34 +29,14 @@ public class Spawner : MonoBehaviour
 
     private void SpawnCube()
     {
-        GetNewOrDisabled(transform, _cubes, _cubePrefab).transform.localPosition = new Vector3(
-            Random.Range(-_spawnPositionX, _spawnPositionX), 0, Random.Range(-_spawnPositionZ, _spawnPositionZ));
-    }
-    
-    private static T GetNewOrDisabled<T>(Transform position, List<T> listObjects, T prefab) where T: MonoBehaviour
-    {
-        foreach (var aButton in listObjects.Where(aButton =>aButton && aButton.gameObject.activeSelf == false))
-        {
-            aButton.gameObject.SetActive(true);
-            aButton.transform.SetParent(position);
-            return aButton;
-        }
-
-        if (position is null || prefab is null)
-        {
-            Debug.LogWarning("Break null error");
-            return null;
-        }
-
-        if (prefab.IsDestroyed())
-        {
-            Debug.LogWarning("Break destroyed null error");
-            return null;
-        }
-
-        T button = Instantiate(prefab, position);
-        button.gameObject.SetActive(true);
-        listObjects.Add(button); 
-        return button;
+        MonoBehaviour cube = _cubes.Get;
+        
+        Vector3 cubePosition = new Vector3(
+            Random.Range(-_spawnPositionX, _spawnPositionX), 0,
+            Random.Range(-_spawnPositionZ, _spawnPositionZ));
+            
+        cube.transform.parent = transform;
+        cube.transform.localPosition = cubePosition;
+        cube.gameObject.SetActive(true);
     }
 }

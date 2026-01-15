@@ -103,7 +103,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -127,9 +127,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cube
   _renderer: {fileID: 5984858044448387072}
-  _floorMask:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!54 &8134275219789121116
 Rigidbody:
   m_ObjectHideFlags: 0
