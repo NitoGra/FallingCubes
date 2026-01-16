@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-internal class Bomb: MonoBehaviour, ICounted
+internal class Bomb: MonoBehaviour, ICounted, ISpawnable
 {   
     private const int MinDisappearRangeInSeconds = 2;
     private const int MaxDisappearRangeInSeconds = 5;
@@ -11,19 +11,27 @@ internal class Bomb: MonoBehaviour, ICounted
     [SerializeField] private Renderer _renderer;
     [SerializeField] private float _explodingRadius;
     [SerializeField] private float _explodingForce;
-    public Action DecreaseCount { get; set; }
     
-    private void OnEnable()
+    public Action DecreaseCount { get; set; }
+    public Action<Vector3> Released { get; set; }
+
+    private void OnDisable()
     {
+        Released?.Invoke(transform.position);
+        DecreaseCount?.Invoke();
+    }
+    
+    public void Spawn(Vector3 position)
+    {
+        transform.position = position;
+        gameObject.SetActive(true);
         _renderer.material.color = Color.black;
         StartCoroutine(Disappear());
     }
     
-    private void OnDisable() => DecreaseCount?.Invoke();
-
     private IEnumerator Disappear()
     {
-        float delay  = Random.Range(MinDisappearRangeInSeconds, MaxDisappearRangeInSeconds);
+        float delay = Random.Range(MinDisappearRangeInSeconds, MaxDisappearRangeInSeconds);
         float elapsed = 0f;
         
         while (elapsed < delay && enabled)
@@ -38,9 +46,9 @@ internal class Bomb: MonoBehaviour, ICounted
     
     private void ExplodeInRadius()
     {   
-        var ds = Physics.OverlapSphere(transform.position, _explodingRadius);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _explodingRadius);
 
-        foreach (var hitCollider in ds)
+        foreach (var hitCollider in colliders)
             hitCollider.attachedRigidbody?.AddExplosionForce(_explodingForce, transform.position, _explodingRadius, 1, ForceMode.Impulse);
     
         gameObject.SetActive(false);

@@ -126,6 +126,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 046e5c1af0505b7449cd088846928809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cube
+  _spawnPositionX: 10
+  _spawnPositionZ: 10
+  _spawnPositionY: 20
   _renderer: {fileID: 5984858044448387072}
 --- !u!54 &8134275219789121116
 Rigidbody:

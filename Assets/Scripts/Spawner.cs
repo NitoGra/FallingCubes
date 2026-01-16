@@ -1,65 +1,46 @@
+using System;
 using System.Collections;
-using System.Text;
-using TMPro;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-public class Spawner : MonoBehaviour
+public class Spawner<T> where T : MonoBehaviour, ISpawnable, ICounted
 {
-    [SerializeField] private Cube _cubePrefab;
-    [SerializeField] private Bomb _bombPrefab;
-    [SerializeField] private float _spawnPositionX;
-    [SerializeField] private float _spawnPositionZ;
-    [SerializeField] private TextMeshProUGUI _counterVisual;
+    private readonly float _spawnDelayInSeconds;
+    private readonly Pool _items;
+    private readonly Action<Vector3> _itemSpawned;
 
-    private Pool _cubes;
-    private Pool _bombs;
+    public Action CountItemSpawned;
+    public Action CountItemCreated;
+    public Action CountItemDespawned;
 
-    private void Start()
+    public Spawner(T prefab, float spawnDelayInSeconds = 0.1f, Action<Vector3> itemSpawned = null)
     {
-        _cubes = new Pool(_cubePrefab);
-        _bombs = new Pool(_bombPrefab);
-        StartCoroutine(Spawn());
+        _items = new Pool(prefab);
+        _spawnDelayInSeconds = spawnDelayInSeconds;
+        _itemSpawned = itemSpawned;
     }
 
-    private IEnumerator Spawn()
+    public IEnumerator SpawnObjects()
     {
-        WaitForSeconds wait = new WaitForSeconds(0.1f);
-        
-        while (enabled)
+        WaitForSeconds wait = new WaitForSeconds(_spawnDelayInSeconds);
+
+        while (true)
         {
+            Spawn();
             yield return wait;
-            SpawnCube();
-            SetCounters();
         }
     }
 
-    private void SetCounters()
+    public void Spawn(Vector3 position = default)
     {
-        StringBuilder textDescription = new();
-
-        var counts = _cubes.GetCounts;
-        textDescription.Append("Cubes\n");
-        textDescription.Append($"Created: {counts.created}\nSpawned: {counts.spawned}\nActive: {counts.active}\n");
-
-        counts = _bombs.GetCounts;
-        textDescription.Append("\nBombs\n");
-        textDescription.Append($"Created: {counts.created}\nSpawned: {counts.spawned}\nActive: {counts.active}\n");
-
-        _counterVisual.text = textDescription.ToString();
-    }
-
-    private void SpawnCube()
-    {
-        Cube cube = _cubes.Get.GetComponent<Cube>();
+        (T item, bool isCreated) result = ((T, bool))_items.Get();
         
-        Vector3 cubePosition = new Vector3(
-            Random.Range(-_spawnPositionX, _spawnPositionX), 0,
-            Random.Range(-_spawnPositionZ, _spawnPositionZ));
-            
-        cube.transform.parent = transform;
-        cube.transform.localPosition = cubePosition;
-        cube.gameObject.SetActive(true);
-        cube.Inst(() => _bombs.Get);
+        result.item.Spawn(position);
+        result.item.Released = _itemSpawned;
+        result.item.DecreaseCount = CountItemDespawned;
+
+        CountItemSpawned.Invoke();
+
+        if (result.isCreated)
+            CountItemCreated.Invoke();
     }
 }
