@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-internal class Bomb: MonoBehaviour
+internal class Bomb: MonoBehaviour, ICounted
 {   
     private const int MinDisappearRangeInSeconds = 2;
     private const int MaxDisappearRangeInSeconds = 5;
@@ -9,12 +11,15 @@ internal class Bomb: MonoBehaviour
     [SerializeField] private Renderer _renderer;
     [SerializeField] private float _explodingRadius;
     [SerializeField] private float _explodingForce;
+    public Action DecreaseCount { get; set; }
     
     private void OnEnable()
     {
         _renderer.material.color = Color.black;
         StartCoroutine(Disappear());
     }
+    
+    private void OnDisable() => DecreaseCount?.Invoke();
 
     private IEnumerator Disappear()
     {

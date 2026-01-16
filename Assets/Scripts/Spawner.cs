@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Text;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,6 +10,7 @@ public class Spawner : MonoBehaviour
     [SerializeField] private Bomb _bombPrefab;
     [SerializeField] private float _spawnPositionX;
     [SerializeField] private float _spawnPositionZ;
+    [SerializeField] private TextMeshProUGUI _counterVisual;
 
     private Pool _cubes;
     private Pool _bombs;
@@ -27,7 +30,23 @@ public class Spawner : MonoBehaviour
         {
             yield return wait;
             SpawnCube();
+            SetCounters();
         }
+    }
+
+    private void SetCounters()
+    {
+        StringBuilder textDescription = new();
+
+        var counts = _cubes.GetCounts;
+        textDescription.Append("Cubes\n");
+        textDescription.Append($"Created: {counts.created}\nSpawned: {counts.spawned}\nActive: {counts.active}\n");
+
+        counts = _bombs.GetCounts;
+        textDescription.Append("\nBombs\n");
+        textDescription.Append($"Created: {counts.created}\nSpawned: {counts.spawned}\nActive: {counts.active}\n");
+
+        _counterVisual.text = textDescription.ToString();
     }
 
     private void SpawnCube()

@@ -1,9 +1,8 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Cube : MonoBehaviour, ICube
+public class Cube : MonoBehaviour, ICube, ICounted
 {
     private const int MinDisappearRangeInSeconds = 2;
     private const int MaxDisappearRangeInSeconds = 5;
@@ -12,6 +11,11 @@ public class Cube : MonoBehaviour, ICube
     private bool _isDisappeared = false;
     private Func<MonoBehaviour> _spawnBomb;
     
+    public Action DecreaseCount { get; set; }
+    
+    private void OnDisable() => DecreaseCount?.Invoke();
+
+
     public void Inst(Func<MonoBehaviour> bombsGet)
     {
         _renderer.material.color = Color.white;
